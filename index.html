@@ -1,194 +1,71 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1220">
-<title>Tabahi OSINT Desk</title>
-<style>
-body{margin:0;padding:18px;max-width:760px;margin:auto;background:#0b1220;color:#edf4ff;font:16px -apple-system,BlinkMacSystemFont,Arial,sans-serif}
-h1{font-size:28px;color:#9de4ff}
-h2{font-size:19px}
-p{color:#b7c6da;line-height:1.5}
-section{background:#142136;border:1px solid #344760;padding:16px;border-radius:14px;margin:15px 0}
-input,textarea{box-sizing:border-box;width:100%;padding:13px;margin:7px 0 12px;background:#09111d;color:white;border:1px solid #52647d;border-radius:9px;font-size:16px}
-button,a{display:inline-block;background:#213954;color:white;padding:11px 13px;border:0;border-radius:8px;margin:4px 3px;text-decoration:none;font-size:14px;cursor:pointer}
-.primary{background:#9de4ff;color:#082032;width:100%;font-weight:bold}
-.small{font-size:12px}
-#results a{overflow-wrap:anywhere}
-pre{white-space:pre-wrap;overflow-wrap:anywhere;color:#c9e8ff}
-</style>
-</head>
-<body>
-<h1>Tabahi OSINT Desk</h1>
-<p>Email and username research using public sources. Choose which searches to open. No automatic background investigation.</p>
-
-<section>
-<h2>1. Start investigation</h2>
-<label for="email">Email address</label>
-<input id="email" type="email" placeholder="name@example.com" autocomplete="off">
-<label for="username">Username (optional)</label>
-<input id="username" placeholder="example_username" autocomplete="off">
-<button class="primary" onclick="prepare()">Prepare OSINT Searches</button>
-<p id="status" class="small">Enter an email or username, then prepare searches.</p>
-<div id="results"></div>
-</section>
-
-<section>
-<h2>2. Email OSINT resources</h2>
-<p class="small">Free access and features vary by service.</p>
-<a href="https://haveibeenpwned.com/" target="_blank" rel="noopener">Breach Check</a>
-<a href="https://emailrep.io/" target="_blank" rel="noopener">EmailRep</a>
-<a href="https://epieos.com/" target="_blank" rel="noopener">Epieos</a>
-<a href="https://hunter.io/" target="_blank" rel="noopener">Hunter</a>
-<a href="https://gravatar.com/" target="_blank" rel="noopener">Gravatar</a>
-</section>
-
-<section>
-<h2>3. Username OSINT resources</h2>
-<a href="https://whatsmyname.app/" target="_blank" rel="noopener">WhatsMyName</a>
-<a href="https://namechk.com/" target="_blank" rel="noopener">Namechk</a>
-<a href="https://www.social-searcher.com/" target="_blank" rel="noopener">Social Searcher</a>
-<a href="https://github.com/sherlock-project/sherlock" target="_blank" rel="noopener">Sherlock Project</a>
-<a href="https://github.com/soxoj/maigret" target="_blank" rel="noopener">Maigret Project</a>
-<p class="small">Some projects require Python or another compatible environment; they do not run just by opening the links in Safari.</p>
-</section>
-
-<section>
-<h2>4. Domain intelligence</h2>
-<p class="small">Checks publicly available DNS information for the domain in the email address.</p>
-<button onclick="checkDNS()">Check DNS Records</button>
-<div id="dns"></div>
-<a id="whois" href="https://lookup.icann.org/" target="_blank" rel="noopener">Domain Registration Lookup</a>
-</section>
-
-<section>
-<h2>5. Investigation notes</h2>
-<textarea id="notes" rows="6" placeholder="Source URL, date checked, finding and confidence"></textarea>
-<button onclick="downloadNotes()">Download Notes (.txt)</button>
-<button onclick="clearAll()">Clear Fields</button>
-</section>
-
-<section>
-<h2>Privacy and accuracy</h2>
-<p class="small">Use this tool for your own information or an investigation you are authorised to conduct. External sites receive searches you submit. This dashboard does not access private accounts, private messages, passwords, PAN or Aadhaar records. Search matches are not proof of identity.</p>
-</section>
-
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><title>Tabahi OSINT Desk</title><style>
+:root{color-scheme:dark;--bg:#0b1220;--p:#111c2e;--line:#2b3b55;--t:#edf3ff;--m:#a9b7cc;--a:#67e8c1;--b:#8ab4ff}*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#101b2e,#080d17);color:var(--t);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}header,main,footer{max-width:1080px;margin:auto;padding:20px 16px}h1{font-size:clamp(28px,5vw,42px);margin:0}h2,h3{margin:0 0 8px}.muted,footer{color:var(--m)}.tag{color:var(--a);font-size:12px;letter-spacing:.1em}.notice,.card{border:1px solid var(--line);border-radius:15px;padding:16px;margin:12px 0;background:var(--p)}.notice{background:#292312;border-color:#66552a;color:#ffedb2;font-size:14px}.tabs,.actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.tab,button{border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:#24354e;color:var(--t);font-weight:700;cursor:pointer}.tab.active,.primary{background:var(--a);color:#06251c;border-color:var(--a)}.panel{display:none}.panel.active{display:block}.grid,.results,.resources{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));gap:10px}label{display:block;font-weight:700;margin:12px 0 6px}input,select,textarea{width:100%;padding:12px;border:1px solid #3a4c67;border-radius:10px;background:#08111f;color:var(--t);font:inherit}textarea{min-height:110px}.item{border:1px solid var(--line);border-radius:12px;padding:13px;background:#0b1525}.item a{color:var(--b);font-weight:750;text-decoration:none}.item p{font-size:13px;color:var(--m);margin:6px 0 0}.item small{display:block;color:var(--a);text-transform:uppercase;letter-spacing:.08em}.status{color:var(--a);font-size:14px;white-space:pre-wrap;margin-top:10px}.small{font-size:12px;color:var(--m)}@media(min-width:750px){.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}}
+</style></head><body><header><div class="tag">PUBLIC-SOURCE RESEARCH WORKSPACE</div><h1>Tabahi OSINT Desk</h1><p class="muted">Email, username and telephone research in one mobile-friendly dashboard. Prepare searches, run selected public checks and record source-linked findings.</p></header><main>
+<div class="notice"><b>Privacy and accuracy:</b> This is not a private subscriber database. It cannot reveal confidential telecom records, home addresses, Aadhaar/PAN details or hidden account data. External services may charge or require accounts. A match is a lead, not proof of identity.</div>
+<nav class="tabs"><button class="tab active" data-id="email">Email OSINT</button><button class="tab" data-id="username">Username OSINT</button><button class="tab" data-id="phone">Telephone OSINT</button><button class="tab" data-id="notes">Case Notes</button></nav>
+<section class="panel active" id="email"><div class="card"><h2>Email research</h2><p class="muted">Enter an email to prepare exact-match searches and open selected checks. Sites are opened individually; this page does not silently scrape them.</p><label>Email address</label><input id="emailInput" type="email" placeholder="example@example.com"><div class="actions"><button class="primary" onclick="emailSearch()">Prepare email searches</button><button onclick="copy('emailInput')">Copy email</button></div><div class="results" id="emailResults"></div><div class="status" id="emailStatus"></div></div><div class="card"><h3>Email resource catalogue</h3><div class="resources" id="emailResources"></div></div></section>
+<section class="panel" id="username"><div class="card"><h2>Username research</h2><p class="muted">Search public profiles and indexed pages. Similar usernames do not prove shared ownership.</p><label>Username or handle</label><input id="usernameInput" placeholder="username, without @"><div class="actions"><button class="primary" onclick="usernameSearch()">Prepare username searches</button><button onclick="copy('usernameInput')">Copy username</button></div><div class="results" id="usernameResults"></div><div class="status" id="usernameStatus"></div></div><div class="card"><h3>Username resource catalogue</h3><div class="resources" id="usernameResources"></div></div></section>
+<section class="panel" id="phone"><div class="card"><h2>Telephone OSINT</h2><p class="muted">Normalise a number, perform a basic length check and prepare public-source searches. A browser-only check cannot confirm that a number is active or identify its subscriber.</p><div class="grid"><div><label>Country / region</label><select id="country"><option value="+91" selected>India (+91)</option><option value="+1">US/Canada (+1)</option><option value="+44">United Kingdom (+44)</option><option value="+61">Australia (+61)</option><option value="+49">Germany (+49)</option><option value="+33">France (+33)</option><option value="+971">UAE (+971)</option><option value="">Other / international format</option></select></div><div><label>Telephone number</label><input id="phoneInput" type="tel" inputmode="tel" placeholder="+91 98765 43210"></div></div><div class="actions"><button class="primary" onclick="phoneSearch()">Prepare phone checks</button><button onclick="copyPhone()">Copy normalised number</button></div><div class="item" id="assessment">The assessment appears here after you prepare checks.</div><div class="results" id="phoneResults"></div><div class="status" id="phoneStatus"></div></div><div class="card"><h3>Telephone resource catalogue</h3><p class="muted">Caller-ID services may collect submitted contact data. Review their privacy terms before use.</p><div class="resources" id="phoneResources"></div></div></section>
+<section class="panel" id="notes"><div class="card"><h2>Case notes</h2><p class="muted">Notes remain in this page until downloaded; this code does not upload them.</p><label>Case label</label><input id="caseTitle" placeholder="e.g. Case 001"><label>Research notes</label><textarea id="caseNotes" placeholder="Date — source URL — observation — confidence — verification step"></textarea><div class="actions"><button class="primary" onclick="downloadNotes()">Download notes (.txt)</button><button onclick="clearNotes()">Clear notes</button></div><p class="small">Avoid storing passwords, API secrets or unnecessary sensitive personal data.</p></div></section></main><footer>Tabahi OSINT Desk • Lawful, authorised public-source research only.</footer>
 <script>
-let domain = "";
-
-function addLink(label, url) {
-  const a = document.createElement("a");
-  a.textContent = label;
-  a.href = url;
-  a.target = "_blank";
-  a.rel = "noopener noreferrer";
-  document.getElementById("results").appendChild(a);
-}
-
-function prepare() {
-  const email = document.getElementById("email").value.trim();
-  const username = document.getElementById("username").value.trim().replace(/^@/, "");
-  const results = document.getElementById("results");
-  results.replaceChildren();
-
-  if (!email && !username) {
-    document.getElementById("status").textContent = "Enter an email or username first.";
-    return;
-  }
-
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    document.getElementById("status").textContent = "Please check the email address.";
-    return;
-  }
-
-  if (email) {
-    domain = email.substring(email.lastIndexOf("@") + 1).toLowerCase();
-    const exact = '"' + email + '"';
-    addLink("Google exact search", "https://www.google.com/search?q=" + encodeURIComponent(exact));
-    addLink("Bing exact search", "https://www.bing.com/search?q=" + encodeURIComponent(exact));
-    addLink("DuckDuckGo search", "https://duckduckgo.com/?q=" + encodeURIComponent(exact));
-    addLink("LinkedIn mentions", "https://www.google.com/search?q=" + encodeURIComponent("site:linkedin.com " + exact));
-    addLink("Facebook mentions", "https://www.google.com/search?q=" + encodeURIComponent("site:facebook.com " + exact));
-    addLink("GitHub mentions", "https://github.com/search?q=" + encodeURIComponent(email));
-    addLink("Breach checker", "https://haveibeenpwned.com/");
-    document.getElementById("whois").href = "https://lookup.icann.org/en/lookup?name=" + encodeURIComponent(domain);
-  }
-
-  if (username) {
-    const exactUser = '"' + username + '"';
-    addLink("Google username search", "https://www.google.com/search?q=" + encodeURIComponent(exactUser));
-    addLink("Instagram mentions", "https://www.google.com/search?q=" + encodeURIComponent("site:instagram.com " + exactUser));
-    addLink("X mentions", "https://www.google.com/search?q=" + encodeURIComponent("site:x.com " + exactUser));
-    addLink("Reddit mentions", "https://www.google.com/search?q=" + encodeURIComponent("site:reddit.com " + exactUser));
-    addLink("TikTok mentions", "https://www.google.com/search?q=" + encodeURIComponent("site:tiktok.com " + exactUser));
-    addLink("GitHub username search", "https://github.com/search?q=" + encodeURIComponent(username));
-  }
-
-  document.getElementById("status").textContent =
-    "Search links are ready. Tap any link to open that source.";
-}
-
-async function checkDNS() {
-  if (!domain) {
-    document.getElementById("dns").textContent =
-      "Enter an email and tap Prepare OSINT Searches first.";
-    return;
-  }
-
-  const box = document.getElementById("dns");
-  box.replaceChildren();
-  const output = document.createElement("pre");
-  output.textContent = "Checking public DNS records...";
-  box.appendChild(output);
-
-  const lines = [];
-
-  for (const type of ["MX", "TXT", "NS", "A"]) {
-    try {
-      const response = await fetch(
-        "https://dns.google/resolve?name=" +
-        encodeURIComponent(domain) + "&type=" + type
-      );
-      if (!response.ok) throw new Error("Request failed");
-      const data = await response.json();
-      const values = (data.Answer || []).map(record => record.data);
-      lines.push(type + ": " + (values.join("; ") || "No records returned"));
-    } catch (error) {
-      lines.push(type + ": Lookup unavailable in this browser");
-    }
-  }
-
-  output.textContent = lines.join("\n");
-}
-
-function downloadNotes() {
-  const content =
-    "Tabahi OSINT Desk Notes\n" +
-    "Date: " + new Date().toISOString() + "\n" +
-    "Email: " + document.getElementById("email").value + "\n" +
-    "Username: " + document.getElementById("username").value + "\n\n" +
-    document.getElementById("notes").value;
-
-  const blob = new Blob([content], {type: "text/plain;charset=utf-8"});
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "tabahi-osint-notes.txt";
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-function clearAll() {
-  document.getElementById("email").value = "";
-  document.getElementById("username").value = "";
-  document.getElementById("notes").value = "";
-  document.getElementById("results").replaceChildren();
-  document.getElementById("dns").replaceChildren();
-  document.getElementById("status").textContent = "Fields cleared.";
-  domain = "";
-}
-</script>
-</body>
-</html>
+const R={
+email:[
+["Have I Been Pwned","https://haveibeenpwned.com/","Breach-exposure check; follow the service's own flow.","Exposure check"],
+["EmailRep","https://emailrep.io/","Email reputation signals; coverage/access may vary.","Reputation"],
+["Epieos","https://epieos.com/","Email and online-presence research; terms may vary.","Research"],
+["Hunter.io","https://hunter.io/","Domain-based professional email discovery and verification.","Finder / paid options"],
+["Gravatar","https://en.gravatar.com/site/check/","Check for a public avatar association.","Public profile"],
+["Email Dossier","https://centralops.net/co/emaildossier.aspx","Email/domain diagnostics; availability may change.","Diagnostics"],
+["Email Hippo","https://tools.emailhippo.com/","Email validation; some features may require an account.","Validation"],
+["F-Secure Identity Theft Checker","https://f-secure.com/us-en/identity-theft-checker","Consumer identity-exposure checker; review privacy guidance.","Safety"],
+["IntelTechniques Email","https://inteltechniques.com/tools/Email.html","Search helper for email-related public sources.","Search helper"],
+["OCCRP Aleph","https://data.occrp.org/","Investigative datasets; coverage and access vary.","Datasets"],
+["OpenPGP Keyserver","https://keys.openpgp.org/","Search for publicly published OpenPGP keys.","Public key"],
+["DeHashed","https://dehashed.com/","Commercial data-search service; authorised access only.","Paid service"],
+["Blackbird","https://github.com/p1ngul1n0/blackbird","Open-source username/account search project; setup may be required.","Open source"],
+["GHunt","https://github.com/mxrch/GHunt","Open-source Google-account OSINT project; setup/access may change.","Open source"]],
+username:[
+["WhatsMyName","https://whatsmyname.app/","Search usernames across supported public websites.","Username search"],
+["Namechk","https://namechk.com/","Check handle availability; not proof of identity.","Availability"],
+["Namecheckr","https://namecheckr.com/","Username/domain availability checks.","Availability"],
+["Sherlock","https://github.com/sherlock-project/sherlock","Open-source username search; running it requires setup.","Open source"],
+["Maigret","https://github.com/soxoj/maigret","Open-source username OSINT; local setup required.","Open source"],
+["Social Searcher","https://www.social-searcher.com/","Search supported public social content; coverage varies.","Social search"],
+["IDCrawl","https://www.idcrawl.com/username-search","Public username-search aggregator.","Search service"],
+["IntelTechniques Username","https://inteltechniques.com/tools/Username.html","Search helper for username-related public sources.","Search helper"],
+["KnowEm","https://knowem.com/","Username/brand handle availability checks.","Availability"],
+["User Searcher","https://www.user-searcher.com/","Public username-search resource.","Search service"],
+["UnAvatar","https://unavatar.io/","Avatar lookup for supported public profiles.","Avatar lookup"]],
+phone:[
+["Google Search","https://www.google.com/","Search the exact number and compare independent public sources.","Public search"],
+["Bing Search","https://www.bing.com/","Compare a second search index.","Public search"],
+["Truecaller","https://www.truecaller.com/","Caller ID/spam service; review contact-data implications.","Caller ID"],
+["NumLookup","https://www.numlookup.com/","Reverse lookup primarily focused on US numbers; coverage varies.","Reverse lookup"],
+["This Number","https://www.thisnumber.com/","Reverse phone lookup; coverage varies by country.","Reverse lookup"],
+["PhoneValidator","https://www.phonevalidator.com/","Provider-side validation where supported.","Validation"],
+["ScamSearch","https://scamsearch.io/","Search public scam-number reports; absence proves nothing.","Scam reports"],
+["SEON Phone API","https://docs.seon.io/api-reference/phone-api","Commercial API for supported phone intelligence and profile signals.","Paid API"],
+["Twilio Lookup","https://www.twilio.com/docs/lookup","Basic validation is free; additional line-type intelligence is paid.","API / paid options"],
+["Google libphonenumber","https://github.com/google/libphonenumber","Open-source parsing/numbering-plan validation; cannot confirm subscriber.","Open source"],
+["PhoneInfoga","https://github.com/sundowndev/phoneinfoga","Open-source phone OSINT tool; setup/external sources may be needed.","Open source"],
+["Indicator Search","https://indicatorsearch.app/","Phone research service; check current access and coverage.","Research"],
+["Cylect","https://cylect.io/","Search across supported websites and search engines.","Search service"],
+["Epsy","https://espysys.com/osint-tools-and-api/","OSINT tools and APIs; account/trial/paid terms may apply.","API / paid options"],
+["GSM Arena","https://www.gsmarena.com/search.php3?","Handset specifications, not subscriber identity.","Device research"],
+["Getcontact","https://getcontact.com/en/","Caller identification; carefully review contact-data permissions.","Caller ID"],
+["Data Acquisition OSINT","https://github.com/The-Osint-Toolbox/Data-Acquisition-OSINT","Related resource directory.","Directory"],
+["Telegram OSINT","https://github.com/The-Osint-Toolbox/Telegram-OSINT","Related resource directory; lawful public information only.","Directory"]]};
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function render(id,key){document.getElementById(id).innerHTML=R[key].map(x=>`<article class="item"><small>${esc(x[3])}</small><a href="${x[1]}" target="_blank" rel="noopener noreferrer">${esc(x[0])} ↗</a><p>${esc(x[2])}</p></article>`).join('')}
+render('emailResources','email');render('usernameResources','username');render('phoneResources','phone');
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.id))});
+function c(title,desc,url,label='Open source'){return `<article class="item"><b>${esc(title)}</b><p>${esc(desc)}</p><a target="_blank" rel="noopener noreferrer" href="${url}">${label} ↗</a></article>`}
+function emailSearch(){let v=document.getElementById('emailInput').value.trim(),o=document.getElementById('emailResults');if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){o.innerHTML='';emailStatus.textContent='Enter an email in a valid-looking format.';return}let q=encodeURIComponent('"'+v+'"'),d=v.split('@').pop();o.innerHTML=[c('Google exact match','Search public indexed pages.','https://www.google.com/search?q='+q,'Search Google'),c('Bing exact match','Compare another search index.','https://www.bing.com/search?q='+q,'Search Bing'),c('Have I Been Pwned','Use the provider to check exposure.','https://haveibeenpwned.com/'),c('EmailRep','Review reputation signals.','https://emailrep.io/'),c('Epieos','Open email research service.','https://epieos.com/'),c('Gravatar','Check public avatar association.','https://en.gravatar.com/site/check/'+encodeURIComponent(v)),c('Domain search','Research the domain, not a private mailbox.','https://www.google.com/search?q='+encodeURIComponent('site:'+d+' contact')),c('Hunter.io','Review domain-based discovery options.','https://hunter.io/')].join('');emailStatus.textContent='Prepared 8 checks. No external websites were silently scraped; open each source and assess its results.'}
+function usernameSearch(){let v=document.getElementById('usernameInput').value.trim().replace(/^@/,''),o=document.getElementById('usernameResults');if(!v||/\s/.test(v)){o.innerHTML='';usernameStatus.textContent='Enter one username without spaces.';return}let q=encodeURIComponent('"'+v+'"');o.innerHTML=[c('Google exact match','Search public indexed pages.','https://www.google.com/search?q='+q,'Search Google'),c('Bing exact match','Compare another index.','https://www.bing.com/search?q='+q,'Search Bing'),c('WhatsMyName','Search supported public sites.','https://whatsmyname.app/'),c('Namechk','Check handle availability.','https://namechk.com/'),c('Social Searcher','Search supported public social content.','https://www.social-searcher.com/'),c('Sherlock','Open-source project; running requires setup.','https://github.com/sherlock-project/sherlock','View project'),c('Maigret','Open-source username search tool.','https://github.com/soxoj/maigret','View project'),c('Public-page query','Search indexed pages mentioning the handle.','https://www.google.com/search?q='+q,'Search pages')].join('');usernameStatus.textContent='Prepared 8 checks. A matching handle alone does not prove account ownership.'}
+function normPhone(){let raw=document.getElementById('phoneInput').value.trim(),d=raw.replace(/\D/g,''),p=document.getElementById('country').value;if(raw.startsWith('+'))return '+'+d;if(p==='+91'&&d.length===11&&d.startsWith('0'))d=d.slice(1);if(p&&d.startsWith(p.slice(1)))return '+'+d;return p?p+d:(d?'+'+d:'')}
+function phoneSearch(){let raw=phoneInput.value.trim(),n=normPhone(),d=n.replace(/\D/g,''),o=phoneResults;if(d.length<7||d.length>15){assessment.textContent='The number length looks unusual. Check the country code and digits. This is a broad length check, not full validation.';o.innerHTML='';phoneStatus.textContent='Enter a plausible international phone number.';return}assessment.innerHTML='<b>Normalised format:</b> '+esc(n)+'<br><b>Digits excluding +:</b> '+d.length+'<br><b>Assessment:</b> Broad length is plausible. This does not confirm assignment, activity, owner, carrier or reachability.';let q=encodeURIComponent('"'+n+'"'),dq=encodeURIComponent('"'+d+'"');o.innerHTML=[c('Google exact number','Search the international format.','https://www.google.com/search?q='+q,'Search Google'),c('Digits-only search','Find pages without punctuation.','https://www.google.com/search?q='+dq,'Search Google'),c('Bing number search','Compare public indexed results.','https://www.bing.com/search?q='+q,'Search Bing'),c('Truecaller','Check provider-side caller ID.','https://www.truecaller.com/'),c('ScamSearch','Look for public scam reports.','https://scamsearch.io/'),c('PhoneValidator','Open provider-side validation.','https://www.phonevalidator.com/'),c('NumLookup','Primarily US-focused; coverage varies.','https://www.numlookup.com/'),c('Twilio Lookup','Free basic lookup; paid additional intelligence.','https://www.twilio.com/docs/lookup/quickstart','API docs'),c('SEON Phone API','Commercial API; credentials/pricing may be required.','https://docs.seon.io/api-reference/phone-api','API docs'),c('Google libphonenumber','Numbering-plan validation library.','https://github.com/google/libphonenumber','View project')].join('');phoneStatus.textContent='Prepared 10 checks. This page does not call paid APIs or claim to identify a subscriber. Live API enrichment requires authorised credentials and a secure backend.'}
+function copyText(t){if(!t){alert('Nothing to copy yet.');return}if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>alert('Copied.')).catch(()=>prompt('Copy this text:',t));else prompt('Copy this text:',t)}
+function copy(id){copyText(document.getElementById(id).value.trim())}function copyPhone(){copyText(normPhone())}
+function downloadNotes(){let t=document.getElementById('caseTitle').value.trim()||'OSINT research notes',n=document.getElementById('caseNotes').value,b=new Blob([t+'\n'+'='.repeat(t.length)+'\nCreated: '+new Date().toISOString()+'\n\n'+n+'\n'],{type:'text/plain;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='tabahi-osint-notes.txt';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href)}
+function clearNotes(){if(confirm('Clear the case title and notes?')){caseTitle.value='';caseNotes.value=''}}
+</script></body></html>
